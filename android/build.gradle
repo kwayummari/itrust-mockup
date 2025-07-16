@@ -1,0 +1,28 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+
+        maven {
+            url "https://identy.jfrog.io/identy/identy-finger-release"
+            credentials {
+                username = "itrust01"
+                password = "IwdcIg0hwhGkz0"
+
+            }
+        }
+
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

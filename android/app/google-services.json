@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "899276707559",
+    "project_id": "iwealth-48ef6",
+    "storage_bucket": "iwealth-48ef6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899276707559:android:b1077d5f6bd9680af2f442",
+        "android_client_info": {
+          "package_name": "tz.co.itrust.iwealth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB11LQvLRqkE6cLLTTEsiACNDqM-k-ZWy8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

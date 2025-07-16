@@ -1,0 +1,139 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id 'com.google.gms.google-services'
+
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+// keystore Properties block. Added by EDGAR JN
+    def keystoreProperties = new Properties()
+    def keystorePropertiesFile = rootProject.file('key.properties')
+
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader("UTF-8") { reader ->
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader ->
+        localProperties.load(reader)
+    }
+}
+
+
+
+
+android {
+    namespace = "tz.co.itrust.iwealth"
+    compileSdk = localProperties.getProperty("flutter.compileSdkVersion").toInteger()
+    ndkVersion = localProperties.getProperty("flutter.ndkVersion")
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    packagingOptions {
+        // Suggested to implement flutter and Android Native Identy SDK
+        pickFirst '**/*.so'
+        pickFirst 'lib/armeabi-v7a/libnode.so'
+        pickFirst 'lib/arm64-v8a/libnode.so'
+        pickFirst 'lib/x86_64/libnode.so'
+        pickFirst 'lib/x86/libnode.so'
+
+        pickFirst 'lib/armeabi-v7a/libonnxruntime.so'
+        pickFirst 'lib/arm64-v8a/libonnxruntime.so'
+        pickFirst 'lib/x86_64/libonnxruntime.so'
+        pickFirst 'lib/x86/libonnxruntime.so'
+
+        pickFirst 'lib/armeabi-v7a/libsupport-native-lib.so'
+        pickFirst 'lib/arm64-v8a/libsupport-native-lib.so'
+        pickFirst 'lib/x86_64/libsupport-native-lib.so'
+        pickFirst 'lib/x86/libsupport-native-lib.so'
+
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/x86/libc++_shared.so'
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "tz.co.itrust.iwealth"
+        multiDexEnabled true
+        minSdk = localProperties.getProperty("flutter.minSdkVersion").toInteger()
+        targetSdk = localProperties.getProperty("flutter.targetSdkVersion").toInteger()
+        versionCode = localProperties.getProperty("flutter.versionCode").toInteger()
+        versionName = localProperties.getProperty("flutter.versionName")
+    }
+
+    // START: signing config added by EDGAR JN
+    signingConfigs {
+        release {
+            keyAlias = keystoreProperties['keyAlias']
+            keyPassword = keystoreProperties['keyPassword']
+            storeFile = file(keystoreProperties['storeFile'])
+            storePassword = keystoreProperties['storePassword']
+        }
+    }  // END
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig = signingConfigs.release // debug or release
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
+
+dependencies {
+
+    // Identy
+    implementation(group: 'com.identy.app', name: 'finger', version: '6.1.1-develop', ext: 'aar')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // SDK additional libraries required
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.appcompat:appcompat-resources:1.7.0")
+    implementation 'com.android.volley:volley:1.2.1'
+
+    def room_version = "1.1.0"
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    implementation ('android.arch.lifecycle:livedata:1.1.1') { }
+    implementation ('android.arch.lifecycle:viewmodel:1.1.1') { }
+
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.databinding:viewbinding:8.7.2'
+
+    def camerax_version = '1.4.0'
+    implementation "androidx.camera:camera-core:$camerax_version"
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    implementation "androidx.camera:camera-view:$camerax_version"
+
+    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.0'
+    implementation 'com.google.guava:guava:31.1-android'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+
+    implementation platform('com.google.firebase:firebase-bom:33.5.1') // Use the latest Firebase BoM version
+    implementation 'com.google.firebase:firebase-analytics'
+
+}

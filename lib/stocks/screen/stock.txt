@@ -1,0 +1,466 @@
+import 'package:iwealth/User/providers/metadata.dart';
+import 'package:iwealth/User/screen/kyc.dart';
+import 'package:iwealth/constants/app_color.dart';
+import 'package:iwealth/services/api_endpoints.dart';
+import 'package:iwealth/services/session/app_session.dart';
+import 'package:iwealth/services/waiter_service.dart';
+import 'package:iwealth/stocks/provider/market.dart';
+import 'package:iwealth/stocks/services/apis_request.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class StockScreen extends StatefulWidget {
+  const StockScreen({super.key});
+
+  @override
+  State<StockScreen> createState() => _StockScreenState();
+}
+
+class _StockScreenState extends State<StockScreen> {
+  double _currentSliderValue = 25;
+  int index = 0;
+  List<String> indexes = ["DSE", "TZS", "BSN", "INFR"];
+
+  void nidabtnPressed(provider) {
+    Waiter().getSectors("bank", provider);
+    Waiter().getSectors("sector", provider);
+    Waiter().getSourceOfIncome("kin", provider);
+    Waiter().getSourceOfIncome("source", provider);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appHeight = MediaQuery.of(context).size.height;
+    final appWidth = MediaQuery.of(context).size.width;
+    final marketProvider = Provider.of<MarketProvider>(context);
+    final metadataProvider = Provider.of<MetadataProvider>(context);
+
+    return Scaffold(
+      backgroundColor: AppColor().mainColor,
+      appBar: AppBar(
+        backgroundColor: AppColor().mainColor,
+        leading: Icon(
+          Icons.account_circle_outlined,
+          color: AppColor().textColor,
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.search,
+                color: AppColor().textColor,
+              )),
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.notifications,
+                color: AppColor().textColor,
+              )),
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.qr_code_scanner_rounded,
+                color: AppColor().textColor,
+              ))
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          height: appHeight,
+          width: appWidth,
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                color: AppColor().gang,
+                height: appHeight * 0.12,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "${marketProvider.marketIndex![index].code}   ${marketProvider.marketIndex![index].closePrice}",
+                          style: TextStyle(color: AppColor().textColor),
+                        ),
+                        Text(
+                          "|",
+                          style: TextStyle(color: AppColor().blueBTN),
+                        ),
+                        Text("${marketProvider.marketIndex![index].change}%",
+                            style: TextStyle(
+                              color: double.parse(marketProvider
+                                          .marketIndex![index].change
+                                          .toString()) <
+                                      0
+                                  ? Colors.red
+                                  : AppColor().textColor,
+                            )),
+                        MaterialButton(
+                          onPressed: () {},
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                  color: marketProvider.market == "closed"
+                                      ? Colors.red
+                                      : AppColor().success),
+                              borderRadius: BorderRadius.circular(5.0)),
+                          color: marketProvider.market == "closed"
+                              ? Colors.red
+                              : AppColor().success,
+                          child: Text(
+                            "Market is ${marketProvider.market}",
+                            style: TextStyle(color: AppColor().textColor),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: appWidth * 0.4,
+                      child: Slider(
+                        value: _currentSliderValue,
+                        max: 100,
+                        divisions: 4,
+                        label:
+                            marketProvider.marketIndex![index].code.toString(),
+                        onChanged: (double value) {
+                          setState(() {
+                            _currentSliderValue = value;
+                            _currentSliderValue == 50
+                                ? index = 1
+                                : _currentSliderValue == 75
+                                    ? index = 2
+                                    : _currentSliderValue == 100
+                                        ? index = 3
+                                        : index = 0;
+                          });
+                        },
+                      ),
+                    ),
+                    // Icon(Icons.arrow_drop_down, color: AppColor().textColor,)
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(10.0),
+                height: appHeight * 0.1,
+                width: appWidth,
+                decoration: BoxDecoration(
+                    color: AppColor().inputFieldColor,
+                    border: Border.all(color: AppColor().blueBTN),
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(
+                        Icons.info,
+                        color: AppColor().textColor,
+                      ),
+                      Text(
+                        "Hi ${SessionPref.getUserProfile()?[0]}, Complete KYC to\n start investing ",
+                        style: TextStyle(color: AppColor().textColor),
+                      ),
+                      MaterialButton(
+                        onPressed: () {
+                          // void nidabtnPressed() {
+                          nidabtnPressed(metadataProvider);
+                          // setState(() {
+                          //   step = 2;
+                          // });
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const KYCScreen()));
+                          // }
+                        },
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: AppColor().blueBTN),
+                            borderRadius: BorderRadius.circular(5.0)),
+                        color: AppColor().blueBTN,
+                        child: Text(
+                          "Proceed",
+                          style: TextStyle(color: AppColor().textColor),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: appHeight * 0.05,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "DSE Stocks",
+                  style: TextStyle(
+                      color: AppColor().textColor,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 18.0),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                height: appHeight * 0.17,
+                width: appWidth,
+                child: FutureBuilder(
+                    future: StockWaiter().getStocks(),
+                    builder: (context, snapshot) {
+                      return ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: snapshot.data?.length,
+                          itemBuilder: (context, i) {
+                            if (snapshot.hasData) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: AppColor().grayText, width: 0.2),
+                                    color: AppColor().grayText,
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomLeft,
+                                      stops: const [
+                                        0.1,
+                                        0.4,
+                                        // 0.6,
+                                        // 0.9,
+                                      ],
+                                      colors: [
+                                        Color.fromRGBO(88, 184, 255, 0),
+                                        AppColor().gang
+                                        // Colors.indigo,
+                                        // Colors.teal,
+                                      ],
+                                    )),
+                                margin: EdgeInsets.only(right: 10.0),
+                                padding: EdgeInsets.all(8.0),
+                                width: appWidth * 0.8,
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(3.0),
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            child: Image.network(
+                                                snapshot.data[i].logo),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                snapshot.data[i].name,
+                                                style: TextStyle(
+                                                    color: AppColor().textColor,
+                                                    fontFamily: "Poppins",
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              Text(
+                                                "Last retrieved on ${snapshot.data[i].date}",
+                                                style: TextStyle(
+                                                    color: AppColor().grayText),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 12.0,
+                                        top: 15,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Last Trading Price",
+                                                style: TextStyle(
+                                                    color: AppColor().grayText),
+                                              ),
+                                              Text(
+                                                "TZS ${snapshot.data[i].openPrice}",
+                                                style: TextStyle(
+                                                    color: AppColor().textColor,
+                                                    fontSize: 18.0),
+                                              )
+                                            ],
+                                          ),
+                                          VerticalDivider(),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Change",
+                                                style: TextStyle(
+                                                    color: AppColor().grayText),
+                                              ),
+                                              Text(
+                                                " TZS ${snapshot.data[i].changeAmount}(${snapshot.data[i].changePercentage}%)",
+                                                style: TextStyle(
+                                                    color: int.parse(snapshot
+                                                                .data[i]
+                                                                .changeAmount) >=
+                                                            0
+                                                        ? AppColor().success
+                                                        : Colors.red,
+                                                    fontSize: 18.0),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                // child: ListTile(
+
+                                //   leading: Icon(Icons.flag_circle_outlined),
+                                //   title: Text(snapshot.data[i].fullname),
+                                //   subtitle: Text("Last Trading Price"),
+                                // ),
+                              );
+                            } else if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    color: AppColor().blueBTN,
+                                  ),
+                                  Text(
+                                    "Loading...",
+                                    style: TextStyle(color: AppColor().blueBTN),
+                                  )
+                                ],
+                              );
+                            } else {
+                              return const Center(
+                                  child: Text(
+                                "Unknown Error!",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ));
+                            }
+                          });
+                    }),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Market Movers",
+                  style: TextStyle(
+                      color: AppColor().textColor,
+                      fontSize: 17.0,
+                      letterSpacing: 1.0),
+                ),
+              ),
+              SizedBox(
+                height: appHeight*0.3,
+                width: appWidth,
+                child: PageView(
+                
+                  children: [
+                    Container(
+                      height: appHeight * 0.3,
+                      width: appWidth,
+                      // color: AppColor().blueBTN,
+                      child: ListView(
+                        children: [
+                             Container(
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: AppColor().grayText))
+              ),
+              child: ListTile(
+                tileColor: AppColor().mainColor,
+                
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(),
+                ),
+                onTap: (){Waiter().getFundList();},
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("iTrust Mid-Cap Fund", style: TextStyle(fontFamily: "Poppins", color: AppColor().textColor,fontSize: 17.0, fontWeight: FontWeight.w600),),
+                    Text("TZS 84.0", style: TextStyle(fontFamily: "Poppins", color: AppColor().textColor,fontSize: 17.0, fontWeight: FontWeight.w600),),
+                  ],
+                ),
+                subtitle: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  Text("CRDB", style: TextStyle(color: AppColor().grayText),),
+                  Text("volume 715,986", style: TextStyle(color: AppColor().grayText),)
+                
+                ],),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: AppColor().grayText))
+              ),
+              child: ListTile(
+                tileColor: AppColor().mainColor,
+                
+                shape: RoundedRectangleBorder(
+                  side: BorderSide()
+                ),
+                onTap: (){Waiter().getFundList();},
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("iTrust Mid-Cap Fund", style: TextStyle(fontFamily: "Poppins", color: AppColor().textColor,fontSize: 17.0, fontWeight: FontWeight.w600),),
+                    Text("TZS 84.0", style: TextStyle(fontFamily: "Poppins", color: AppColor().textColor,fontSize: 17.0, fontWeight: FontWeight.w600),),
+                  ],
+                ),
+                subtitle: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  Text("CRDB", style: TextStyle(color: AppColor().grayText),),
+                  Text("volume 715,986", style: TextStyle(color: AppColor().grayText),)
+                
+                ],),
+              ),
+            )
+                        ],
+                      ),
+                    ),
+                     Container(
+                      height: appHeight * 0.3,
+                      width: appWidth,
+                      color: AppColor().orangeApp,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

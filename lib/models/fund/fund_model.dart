@@ -1,0 +1,35 @@
+class FundModel {
+  String shareClassCode,
+      salePrice,
+      buyPrice,
+      accountNumber,
+      name,
+      sector,
+      initialMinContribution,
+      nav,
+      description,
+      exitFee,
+      entryFee,
+      units,
+      logoUrl,
+      subsequentAmount,
+      bankName;
+
+  FundModel({
+    required this.buyPrice,
+    required this.salePrice,
+    required this.accountNumber,
+    required this.entryFee,
+    required this.exitFee,
+    required this.description,
+    required this.name,
+    required this.sector,
+    required this.shareClassCode,
+    required this.initialMinContribution,
+    required this.nav,
+    required this.units,
+    required this.logoUrl,
+    required this.subsequentAmount,
+    required this.bankName,
+  });
+}

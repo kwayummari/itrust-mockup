@@ -1,0 +1,38 @@
+class FUNDIPO {
+  String id,
+      name,
+      category,
+      description,
+      fundId,
+      fundCode,
+      openDate,
+      closeDate,
+      coolOffStart,
+      coolOffEnd,
+      minInitContribution,
+      redemptionDate,
+      subsequentAmount,
+      entryFee,
+      exitFee,
+      accountNumber,
+      nav;
+
+  FUNDIPO(
+      {required this.category,
+      required this.accountNumber,
+      required this.closeDate,
+      required this.coolOffEnd,
+      required this.coolOffStart,
+      required this.description,
+      required this.entryFee,
+      required this.exitFee,
+      required this.fundCode,
+      required this.fundId,
+      required this.id,
+      required this.minInitContribution,
+      required this.name,
+      required this.nav,
+      required this.openDate,
+      required this.redemptionDate,
+      required this.subsequentAmount});
+}

@@ -1,0 +1,58 @@
+Card(
+                                
+                                color: AppColor().mainColor,
+                                elevation: 40.0,
+                                surfaceTintColor: AppColor().textColor,
+                                child: ListTile(
+                                  onTap: () {},
+                                  leading: Icon(
+                                    Icons.contactless_outlined,
+                                    color: AppColor().textColor,
+                                  ),
+                                  title: Text(
+                                    snapshot.data[i].name,
+                                    style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        color: AppColor().textColor,
+                                        fontSize: 17.0,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  subtitle: Row(
+                                    children: [
+                                      SizedBox(
+                                        child: Column(
+                                          children: [
+                                            Text("Open Price"),
+                                            Text(
+                                              snapshot.data[i].openPrice,
+                                              style: TextStyle(
+                                                  color: AppColor().textColor),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      VerticalDivider(
+                                        color: AppColor().textColor,
+                                        // width: 10.0,
+                                      ),
+                                      SizedBox(
+                                        child: Column(
+                                          children: [
+                                            Text("Change"),
+                                            Text(
+                                              "${snapshot.data[i].changeAmount}(${snapshot.data[i].changeAmount})",
+                                              style: TextStyle(
+                                                  color: AppColor().textColor),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+
+                              background: linear-gradient(145.33deg, rgba(88, 184, 255, 0.033) 21.76%, rgba(0, 147, 255, 0.1) 83.59%),
+linear-gradient(270deg, rgba(255, 255, 255, 0.0025) -20%, rgba(40, 40, 40, 0.0311301) 75.76%, rgba(255, 255, 255, 0.0025) 123.64%);
+#58B8FF08
